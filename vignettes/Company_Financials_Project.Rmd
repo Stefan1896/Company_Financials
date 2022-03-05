@@ -1,0 +1,19 @@
+---
+title: "Company_Financials_Project"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Company_Financials_Project}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(CompanyFinancials)
+```
