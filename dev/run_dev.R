@@ -12,4 +12,5 @@ golem::detach_all_attached()
 golem::document_and_reload()
 
 # Run the application
+roxygen2::roxygenize()
 run_app()
