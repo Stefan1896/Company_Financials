@@ -4,28 +4,28 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
-#' @importFrom shiny NS tagList 
+#' @importFrom shiny NS tagList
 mod_tab_one_ui <- function(id){
   ns <- NS(id)
   tagList(
- 
+    h1("Module 1")
   )
 }
-    
+
 #' tab_one Server Functions
 #'
-#' @noRd 
+#' @noRd
 mod_tab_one_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
- 
+
   })
 }
-    
+
 ## To be copied in the UI
 # mod_tab_one_ui("tab_one_1")
-    
+
 ## To be copied in the server
 # mod_tab_one_server("tab_one_1")

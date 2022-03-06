@@ -1,19 +1,139 @@
 ---
-title: "Company_Financials_Project"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Company_Financials_Project}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "S&P 500 Company Financials"
+output:
+  html_document:
+    fig_caption: true
+    toc: true
+    fig_width: 7
+    fig_height: 4.5
+    theme: cosmo
+    highlight: tango
+    code_folding: hide
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+knitr::opts_chunk$set(out.width="100%", fig.height = 4.5, split=FALSE, fig.align = 'default', comment = NA)
+options(dplyr.summarise.inform = FALSE)
+knitr::opts_chunk$set(echo=TRUE, error=FALSE, message=FALSE, warning=FALSE)
+options(scipen=999)
 ```
 
-```{r setup}
-library(CompanyFinancials)
+# Introduction
+
+This Markdown is part of a package where company financial data from S&P 500 companies is explored using a Shiny App. The aim of this Markdown is to perform all core back-end analysis of the application without any reactivity. This document will therefore be the template then for developing the Shiny App. The goal of the whole package is to learn how to develop an Shiny App as a package using the golem framework. 
+
+The dataset which is used in this project includes 505 rows with 14 variables.
+<br/><br/>
+
+*Goals:*
+
+- Exploratory Overview of S&P 500 companies using Markdown and Shiny
+- Learning the Golem Framework for developing Shiny Apps as a package
+
+# Preperations {.tabset}
+
+## Load Packages
+
+First, relevant packages are loaded. We load a range of libraries for general data wrangling and general visualisation.
+
+
+```{r packages}
+library(here)         #used for folder navigation
+library(readr)        #used to read data as tibble
+library(skimr)        #used to get overview of data
+library(janitor)      #used to clean variable names
+library(dplyr)        #used for data wrangling
+library(ggplot2)      #used for graphs
+library(gridExtra)     #used for graphs (arrange in gridges)
 ```
+
+## Load Data
+
+The data was downloaded from kaggle and stored locally (login necessary). The here package is used to locate the files relative to the project root. 10 out of 505 observations have at least one missing value. 
+
+```{r data}
+financials <- read_csv(here("data-raw","company_financials.csv"))
+cat(dim(financials[!complete.cases(financials),])[1], "out of", nrow(financials), "observations have at least one missing value.")
+```
+
+# Data Overview and Preprocessing {.tabset}
+
+## Overview
+
+We have a first look at the dataset:
+
+```{r overview}
+skim(financials)
+```
+
+Notes:
+
+- There is some valuable information in this quick overview. The missing datapoints are in the variables Price/Earnings and Price/Book.
+
+- The variables are already classified as numeric and character. From the character variables, Sector is the only one which has not all unique characters. 
+
+- Nearly all of the company Financials are left skewed.
+
+- The variable names are not clean, since they include spaces and variables which start with a number We clean them directly using the janitor package. 
+
+- It is possible to calculate a sales variable, using the market cap and price/sales information.
+
+## Preprocessing 
+
+Based on the notes from the Overview, we will clean the names and add a sales variable to the data. We then again look at the final variable names:
+
+```{r preprocessing}
+#clean names and get sales variable
+names_original <- c(names(financials), "Sales")
+names(financials) <- make_clean_names(names(financials))
+financials <- financials %>% mutate(sales = market_cap/price_sales)
+names(financials)
+```
+
+
+# Univariate Data Exploration {.tabset}
+
+## Numeric Variables
+
+First, let us have a look at the distribution of the numeric variables (Company Financials):
+
+```{r numeric}
+#Save indicator whether variable is numeric or not
+nums <- unlist(lapply(financials, is.numeric))
+#save cleaned names and original names in vector (original names are used as title of x axis)
+nums_names <- names(financials)[nums]
+nums_original_names <- names_original[nums]
+
+#loop through numeric variable names to plot each numeric variable (distribution)
+p <- list()
+j = 1
+for(i in c(nums_names)){
+  p[[j]] <- ggplot(financials, aes_string(x=i)) + 
+              geom_histogram(aes(y=..density..), colour="black", fill="white")+
+              geom_density(alpha=.2, fill="indianred")+ 
+              labs(x = nums_original_names[j], y = "") +
+              theme_classic() + 
+              theme(axis.text.x = element_blank(),
+                    axis.text.y = element_blank())
+  j = j+1
+}
+do.call(grid.arrange,p)
+
+```
+
+## Character Variable
+
+Second, let us have a closer look at the character variables containing company Information. We will only look at sector, since this is the only character variable which not only has unique values for each datapoint.
+
+```{r character}
+ggplot(financials, aes(sector)) +
+  geom_bar(fill = "indianred") +
+  theme_classic() +
+  labs(x = "Sector", y = "Count") +
+  coord_flip()
+
+```
+
+# Multivariate Data Exploration {.tabset}
+
+

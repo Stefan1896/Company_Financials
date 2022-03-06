@@ -5,5 +5,6 @@
 #' @import shiny
 #' @noRd
 app_server <- function(input, output, session) {
-  # Your application server logic
+  mod_tab_one_server("tab_one_1")
+  mod_tab_two_server("tab_two_1")
 }
