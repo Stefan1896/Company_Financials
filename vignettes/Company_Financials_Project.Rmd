@@ -72,21 +72,21 @@ Notes:
 
 - The variables are already classified as numeric and character. From the character variables, Sector is the only one which has not all unique characters. 
 
-- Nearly all of the company Financials are left skewed.
+- Nearly all of the company Financials are right skewed.
 
 - The variable names are not clean, since they include spaces and variables which start with a number We clean them directly using the janitor package. 
 
-- It is possible to calculate a sales variable, using the market cap and price/sales information.
+- It is possible to calculate a sales variable, using the market cap and price/sales information. We can also calculate a Net Profit variable using earnings per share, market cap and price per share. 
 
 ## Preprocessing 
 
-Based on the notes from the Overview, we will clean the names and add a sales variable to the data. We then again look at the final variable names:
+Based on the notes from the Overview, we will clean the names and add a sales  and a net profit variable to the data. We then again look at the final variable names:
 
 ```{r preprocessing}
 #clean names and get sales variable
-names_original <- c(names(financials), "Sales")
+names_original <- c(names(financials), "Sales", "Net Profit")
 names(financials) <- make_clean_names(names(financials))
-financials <- financials %>% mutate(sales = market_cap/price_sales)
+financials <- financials %>% mutate(sales = market_cap/price_sales, net_profit = earnings_share * (market_cap/price))
 names(financials)
 ```
 
@@ -121,19 +121,123 @@ do.call(grid.arrange,p)
 
 ```
 
+Notes:
+
+- Again, we see that many of the company financials are right skewed.
+
+- We might use log transformation in exploring relationships later.
+
+
 ## Character Variable
 
 Second, let us have a closer look at the character variables containing company Information. We will only look at sector, since this is the only character variable which not only has unique values for each datapoint.
 
 ```{r character}
 ggplot(financials, aes(sector)) +
-  geom_bar(fill = "indianred") +
+  geom_bar(fill = "indianred", alpha = 0.2, color = "black") +
   theme_classic() +
   labs(x = "Sector", y = "Count") +
   coord_flip()
 
 ```
+Notes:
 
-# Multivariate Data Exploration {.tabset}
+- We have for all sectors at least 20 datapoints except for Telecommunication Services.
+
+- When exploring the relationship of sector with company financials, we will exclude Telecommunaction Services since the number of datapoints is too low.
 
 
+# Multivariate Data Exploration 
+
+In this sections, we will explore the relationships of our character variable sector with the company financials as well as the relationships between different company financials. The goal here is to give a quick overview of the relationships in the data, there will be no further statistics like effect sizes to further explore the size of effects. Since we are dealing with a lot of extreme values and skeweness, a *Cube Root Transfomration* will be used for some analysis. We will only concentrate on financials which do have a desired meaning for us. For example, price  will not be explored, since this is only gives information about the price per share, which is not meaningful for our analysis without looking also at the number of shares issued.
+
+*Cube root transformation:*
+
+The cube root transformation involves converting x to x^(1/3). This is a fairly strong transformation with a substantial effect on distribution shape: but is weaker than the logarithm. It can be applied to negative and zero values too. 
+
+## Relationship Financials/Sector {.tabset}
+
+```{r financials_vs_sector}
+#loop through numeric variable names to plot each numeric variable in its natural form with sector
+#pn <- list()
+#j = 1
+#for(i in c(nums_names)){
+#  pn[[j]] <- financials %>% filter(sector != "Telecommunication Services") %>% 
+#                  ggplot(aes(x=sector, y = !!sym(i))) +
+#                  geom_boxplot(outlier.shape = NA) + 
+#                  geom_jitter(width=0.1, alpha=0.1, color = "indianred") +
+#                  labs(x = "", y = nums_original_names[j]) +
+#                  theme_classic() +
+#                  coord_flip()
+#  j = j+1
+#}
+
+#loop through numeric variable names to plot each numeric variable cube root transformatted with sector
+pt <- list()
+j = 1
+for(i in c(nums_names)){
+  pt[[j]] <- financials %>% filter(sector != "Telecommunication Services") %>% 
+                  ggplot(aes(x=sector, y = (!!sym(i))^(1/3))) +
+                  geom_boxplot(outlier.shape = NA) + 
+                  geom_jitter(width=0.1, alpha=0.1, color = "indianred") +
+                  labs(x = "", y = paste(nums_original_names[j], "- Cube Root transformatted")) +
+                  theme_classic() +
+                  coord_flip()
+  j = j+1
+}
+do.call(grid.arrange,pt)
+```
+
+### Price/Earnings
+
+```{r price_earnings_vs_sector}
+pt[[2]]
+```
+
+### Dividend Yield
+
+```{r dividend_vs_sector}
+financials %>% filter(sector != "Telecommunication Services") %>% 
+                  ggplot(aes(x=sector, y = dividend_yield)) +
+                  geom_boxplot(outlier.shape = NA) + 
+                  geom_jitter(width=0.1, alpha=0.1, color = "indianred") +
+                  labs(x = "", y = "Dividend Yield") +
+                  theme_classic() +
+                  coord_flip()
+```
+
+### Market Cap
+
+```{r marketcap_vs_sector}
+pt[[7]]
+```
+
+### EBITDA
+
+```{r ebitda_vs_sector}
+pt[[8]]
+```
+
+### Price/Sales
+
+```{r price_sales_vs_sector}
+pt[[9]]
+```
+
+### Price/Book
+
+```{r price_book_vs_sector}
+pt[[10]]
+```
+
+### Sales
+
+```{r sales_vs_sector}
+pt[[11]]
+```
+
+### Net Profit
+
+```{r profit_vs_sector}
+pt[[12]]
+```
