@@ -155,7 +155,7 @@ In this sections, we will explore the relationships of our character variable se
 
 The cube root transformation involves converting x to x^(1/3). This is a fairly strong transformation with a substantial effect on distribution shape: but is weaker than the logarithm. It can be applied to negative and zero values too. 
 
-## Top n Companies {.tabset}
+## Top/Bottom 10 Companies {.tabset}
 
 First, let us look at the top and botton 10 companies of several financials:
 

@@ -3,15 +3,27 @@
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import shinydashboard
 #' @noRd
+#'
+#'
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    fluidPage(
-      mod_tab_one_ui("tab_one_1"),
-      mod_tab_two_ui("tab_two_1")
+    dashboardPage(
+      dashboardHeader(
+      ),
+      dashboardSidebar(sidebarMenu(
+        selectInput("variable", "", selected_names)
+      )),
+      dashboardBody(
+        fluidRow(
+          mod_tab_one_ui("tab_one_1"),
+          mod_tab_two_ui("tab_two_1")
+        )
+      )
     )
   )
 }
