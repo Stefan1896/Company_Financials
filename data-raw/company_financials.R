@@ -12,7 +12,7 @@ financials <- financials %>% mutate(sales = market_cap/price_sales, net_profit =
 selected_financials <- c("price_earnings", "market_cap", "ebitda", "price_sales","price_book", "sales","net_profit")
 indicator <- names(financials) %in%  selected_financials
 selected_names <- names(financials)[indicator]
-
 names(selected_names) <- names_original[indicator]
+
 usethis::use_data(selected_names, overwrite = TRUE)
 usethis::use_data(financials, overwrite = TRUE)
