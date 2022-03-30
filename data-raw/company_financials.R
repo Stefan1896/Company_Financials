@@ -2,6 +2,8 @@
 
 #' @importFrom here here
 #' @importFrom readr read_csv
+#' @importFrom janitor make_clean_names
+#' @importFrom dplyr mutate
 
 financials <- read_csv(here("data-raw","company_financials.csv"))
 

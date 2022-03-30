@@ -12,16 +12,23 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    dashboardPage(
+    dashboardPage(skin = "black",
       dashboardHeader(
       ),
       dashboardSidebar(sidebarMenu(
-        selectInput("variable", "", selected_names)
+        menuItem("Overview", tabName = "tab_one", icon = icon("angle-double-right")),
+        menuItem("Regression", tabName = "tab_two", icon = icon("angle-double-right")),
+        br(),
+        selectInput("variable", "Select your variable:", names(selected_names))
       )),
       dashboardBody(
-        fluidRow(
-          mod_tab_one_ui("tab_one_1"),
-          mod_tab_two_ui("tab_two_1")
+        tabItems(
+          tabItem(tabName = "tab_one",
+            mod_tab_one_ui("tab_one_1")
+          ),
+          tabItem(tabName = "tab_two",
+            mod_tab_two_ui("tab_two_1")
+          )
         )
       )
     )

@@ -6,7 +6,7 @@
 #' @importFROM janitor make_clean_names
 #' @noRd
 app_server <- function(input, output, session) {
-  selected_variable <- reactive(input$variable)
+  selected_variable <- reactive(janitor::make_clean_names(input$variable))
   mod_tab_one_server("tab_one_1", selected_variable)
-  mod_tab_two_server("tab_two_1")
+  mod_tab_two_server("tab_two_1", selected_variable)
 }
