@@ -31,6 +31,8 @@ mod_tab_two_ui <- function(id){
 #'
 #' @noRd
 mod_tab_two_server <- function(id, variableInput){
+  stopifnot(is.reactive(variableInput))
+
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     variables_without_selection <- reactive(selected_names[selected_names != variableInput()])
@@ -46,20 +48,14 @@ mod_tab_two_server <- function(id, variableInput){
         ps[[j]] <- financials %>%
           ggplot(aes(x=(!!sym(variableInput()))^(1/3), y = (!!sym(i))^(1/3))) +
           geom_point(col = "black", alpha = 0.2) +
-          geom_smooth(method='lm', formula= y~x, color = "#009966") +
+          geom_smooth(method='lm', formula= y~x, se = FALSE, color = "indianred") +
           labs(x = "", y = "") +
           ggtitle(paste(names(selected_names)[indicator()], "vs", names(variables_without_selection()[j]))) +
           theme_classic()
         j = j+1
       }
       do.call(
-        grid.arrange,ps)
+        grid.arrange,c(ps, ncol=3))
     })
   })
 }
-
-## To be copied in the UI
-# mod_tab_two_ui("tab_two_1")
-
-## To be copied in the server
-# mod_tab_two_server("tab_two_1")

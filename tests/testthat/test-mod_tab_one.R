@@ -1,31 +1,24 @@
+#testing reactive value from mod_tab_one_server
 testServer(
   mod_tab_one_server,
   # Add here your module params
-  args = list()
-  , {
-    ns <- session$ns
+  args = list(variableInput = reactive("price_earnings")), {
+    #test whether the logical reactive vector called indicator returns exactly one TRUE value as expected
     expect_true(
-      inherits(ns, "function")
+      sum(indicator())==1
+    )
+
+    #test whether missing data of selected variable are removed through 2 tests:
+    expect_true(
+      sum(is.na(financials$price_earnings)) > 0
     )
     expect_true(
-      grepl(id, ns(""))
+      sum(is.na(financials_no_missing()$price_earnings)) == 0
     )
-    expect_true(
-      grepl("test", ns("test"))
-    )
-    # Here are some examples of tests you can
-    # run on your module
-    # - Testing the setting of inputs
-    # session$setInputs(x = 1)
-    # expect_true(input$x == 1)
-    # - If ever your input updates a reactiveValues
-    # - Note that this reactiveValues must be passed
-    # - to the testServer function via args = list()
-    # expect_true(r$x == 1)
-    # - Testing output
-    # expect_true(inherits(output$tbl$html, "html"))
-})
- 
+  }
+)
+
+#default tests already built in from golem
 test_that("module ui works", {
   ui <- mod_tab_one_ui(id = "test")
   golem::expect_shinytaglist(ui)
@@ -35,4 +28,3 @@ test_that("module ui works", {
     expect_true(i %in% names(fmls))
   }
 })
- 

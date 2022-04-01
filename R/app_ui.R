@@ -13,7 +13,8 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # Your application UI logic
     dashboardPage(skin = "black",
-      dashboardHeader(
+                  title = "CompanyFinancials",
+      dashboardHeader(title = "S&P500 Financials"
       ),
       dashboardSidebar(sidebarMenu(
         menuItem("Overview", tabName = "tab_one", icon = icon("angle-double-right")),
