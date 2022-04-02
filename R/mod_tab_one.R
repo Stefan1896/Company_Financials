@@ -105,7 +105,7 @@ mod_tab_one_server <- function(id, variableInput){
 
     output$sector <- renderPlot({
       financials_no_missing() %>% filter(sector != "Telecommunication Services") %>%
-        ggplot(aes(x=sector, y = (!!sym(variableInput()))^(1/3))) +
+        ggplot(aes(x=sector, y = cube_root((!!sym(variableInput()))))) +
         geom_boxplot(outlier.shape = NA) +
         geom_jitter(width=0.1, alpha=0.2, color = "black") +
         labs(x = "", y = paste(names(selected_names)[indicator()], "- Cube Root transformatted")) +

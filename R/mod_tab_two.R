@@ -49,8 +49,8 @@ mod_tab_two_server <- function(id, variableInput){
       ps <- list()
       j = 1
       for(i in variables_without_selection()){
-        ps[[j]] <- financials_no_missing() %>%
-          ggplot(aes(x=(!!sym(variableInput()))^(1/3), y = (!!sym(i))^(1/3))) +
+        ps[[j]] <- financials_no_missing() %>% drop_na(!!sym(i)) %>%
+          ggplot(aes(x=cube_root((!!sym(variableInput()))), y = cube_root((!!sym(i))))) +
           geom_point(col = "black", alpha = 0.2) +
           geom_smooth(method='lm', formula= y~x, se = FALSE, color = "indianred") +
           labs(x = "", y = "") +
