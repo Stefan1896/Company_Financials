@@ -8,7 +8,7 @@ testServer(
       sum(indicator())==1
     )
 
-    #test whether missing data of selected variable are removed through 2 tests:
+    #test whethermissing data of selected variable are removed through 3 tests:
     expect_true(
       sum(is.na(financials$price_earnings)) > 0
     )

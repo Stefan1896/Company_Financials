@@ -38,6 +38,10 @@ mod_tab_two_server <- function(id, variableInput){
     variables_without_selection <- reactive(selected_names[selected_names != variableInput()])
     indicator <- reactive(variableInput() == selected_names)
 
+    financials_no_missing <- reactive(financials %>%
+                                        arrange(desc(!!sym(variableInput()))) %>%
+                                        drop_na(!!sym(variableInput())))
+
 
     output$regressions <- renderPlot({
 
@@ -45,7 +49,7 @@ mod_tab_two_server <- function(id, variableInput){
       ps <- list()
       j = 1
       for(i in variables_without_selection()){
-        ps[[j]] <- financials %>%
+        ps[[j]] <- financials_no_missing() %>%
           ggplot(aes(x=(!!sym(variableInput()))^(1/3), y = (!!sym(i))^(1/3))) +
           geom_point(col = "black", alpha = 0.2) +
           geom_smooth(method='lm', formula= y~x, se = FALSE, color = "indianred") +
